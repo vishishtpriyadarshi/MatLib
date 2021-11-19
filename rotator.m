@@ -1,14 +1,16 @@
 function [c, s, v]= rotator(xi, xj)
     % Q = [c -s; s c]    x = [xi xj]
     
-    beta = max(abs(xi), abs(xj));
-    if beta == 0
-        [c, s, v] = deal(1, 0, 0);
+    if abs(xj) <= abs(xi)
+        t = xj / xi;
+        c = sign(xi) / sqrt(1 + t*t);
+        s = -c * t;
+        v = xi * sqrt(1 + t*t);
     else
-        [xi, xj] = deal(xi/beta, xj/beta);
-        v = sqrt(xi^2 + xj^2);
-        [c, s] = deal(xi/v, xj/v);
-        v = v * beta;
+        k = xi / xj;
+        s = -sign(xj) / sqrt(1 + k*k);
+        c = -s * k;
+        v = xj * sqrt(1 + k*k);
     end
 end
 

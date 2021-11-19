@@ -5,7 +5,7 @@ function [x, residual] = lsp_qr(A, b)
     [~, R, p, gamma, r] = reflectqr_rank_revealing_modified(A);
     c = b;
     
-    for i = 1 : m
+    for i = 1 : r
         u = ones(n - i + 1, 1);
         u(2 : end) = R(i + 1 : n, i);
         c(i : n) = appreflect(u, gamma(i), c(i : n));
