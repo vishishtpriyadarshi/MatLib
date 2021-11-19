@@ -1,4 +1,27 @@
-function [Q, R, p, gamma_val, r] = reflectqr_rank_revealing(A)
+function [x, residual] = lsp_qr(A, b)
+    % Solve overdetermined system Ax = b.
+    
+    [n, m] = size(A);
+    [~, R, p, gamma, r] = reflectqr_rank_revealing_modified(A);
+    c = b;
+    
+    for i = 1 : m
+        u = ones(n - i + 1, 1);
+        u(2 : end) = R(i + 1 : n, i);
+        c(i : n) = appreflect(u, gamma(i), c(i : n));
+    end
+    
+    R = triu(R);
+    R1 = R(1 : r, 1 : r);
+    [c1, c2] = deal(c(1 : r), c(r + 1 : end));
+    
+    residual = norm(c2);
+    y = zeros(m, 1);
+    y(1 : r) = rowforward(R1, c1);
+    x = p * y;
+end
+
+function [Q, R, p, gamma_val, r] = reflectqr_rank_revealing_modified(A)
     [n, m] = size(A);
     gamma_val = zeros(n, 1);
     Q = eye(n);
@@ -51,7 +74,8 @@ function [Q, R, p, gamma_val, r] = reflectqr_rank_revealing(A)
         end
     end
     
-    R = triu(A);
+    % R = triu(A)
+    R = A;
     I = eye(m);
     p = I(:, p);
     
@@ -62,5 +86,5 @@ function [Q, R, p, gamma_val, r] = reflectqr_rank_revealing(A)
             break;
         end
     end
-    R(r + 1 : end, :) = zeros(n - r, m);
+    % R(r + 1 : end, :) = zeros(n - r, m);
 end

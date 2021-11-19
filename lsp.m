@@ -1,4 +1,6 @@
-function x = lsp(A, b)
+function [x, residual] = lsp(A, b)
+    % Solve overdetermined system Ax = b when A has full rank.
+    
     [n, m] = size(A);
     [~, R, gamma] = reflectqr_modified(A);
     c = b;
@@ -9,10 +11,12 @@ function x = lsp(A, b)
         c(i : n) = appreflect(u, gamma(i), c(i : n));
     end
     
-    x = c;
     R = triu(R);
-    x(1 : m) = colbackward(R, c);
+    R1 = R(1 : m, :);
+    x = colbackward(R1, c(1 : m));
+    residual = norm(c(m + 1 : end));
 end
+
 
 function [Q, R, gamma_val] = reflectqr_modified(A)
     [n, m] = size(A);
