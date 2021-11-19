@@ -1,1 +1,1 @@
-# MatLib
+# MatLib - Matrix Library
